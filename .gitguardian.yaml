@@ -1,0 +1,25 @@
+# GitGuardian ignore config (https://docs.gitguardian.com/ggshield-docs/reference/gitguardian-yaml).
+# Every entry here is a local-only demo credential or a publicly-documented
+# shared demo token (see README.md "Known constraints" and CLAUDE.md) --
+# never a real secret. Do not add a real secret to this ignore list; if one
+# is ever accidentally committed, rotate it and remove it from history
+# instead of adding it here.
+version: 2
+
+secret:
+  ignored_paths:
+    # docker-compose.yml's Grafana admin password is for the local-only
+    # Prometheus/Grafana perf-dashboard stack this repo brings up on
+    # localhost -- not exposed anywhere.
+    - "docker-compose.yml"
+    # Fixture data for the REST smoke test's throwaway demo users.
+    - "src/data/users.json"
+
+  ignored_matches:
+    # QuickPizza's own shared public demo token for read/rating traffic --
+    # see src/lib/journeys/restPizzaJourney.ts's comment. Intentionally
+    # public, reused instead of registering throwaway accounts under load.
+    - name: QuickPizza shared public demo token
+      match: "token abcdef0123456789"
+    - name: REST_DEFAULT_PASSWORD demo default
+      match: "12345678"
