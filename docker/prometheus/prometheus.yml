@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+# No scrape job is needed for k6 itself -- metrics arrive via remote_write
+# push from `k6 run --out experimental-prometheus-rw`, not pull. The
+# --web.enable-remote-write-receiver flag on the prometheus container
+# (see docker-compose.yml) is what makes the /api/v1/write endpoint accept them.
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']

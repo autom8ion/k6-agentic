@@ -1,0 +1,3 @@
+node_modules
+reports/*.html
+docker/grafana/provisioning/dashboards/k6-prometheus.json

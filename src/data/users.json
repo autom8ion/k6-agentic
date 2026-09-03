@@ -1,0 +1,5 @@
+[
+  { "usernamePrefix": "k6agentic-alice", "password": "Sm0ke-test-pass1" },
+  { "usernamePrefix": "k6agentic-bob", "password": "Sm0ke-test-pass2" },
+  { "usernamePrefix": "k6agentic-carol", "password": "Sm0ke-test-pass3" }
+]

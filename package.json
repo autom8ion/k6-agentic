@@ -1,0 +1,38 @@
+{
+  "name": "k6-agentic",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "An Agentic Performance Testing Framework in k6",
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "test:rest:smoke": "k6 run tests/rest/smoke.ts",
+    "test:rest:load": "k6 run tests/rest/load.ts",
+    "test:rest:stress": "k6 run tests/rest/stress.ts",
+    "test:rest:soak": "k6 run tests/rest/soak.ts",
+    "test:rest:spike": "k6 run tests/rest/spike.ts",
+    "test:graphql:smoke": "k6 run tests/graphql/smoke.ts",
+    "test:graphql:load": "k6 run tests/graphql/load.ts",
+    "test:graphql:stress": "k6 run tests/graphql/stress.ts",
+    "test:graphql:soak": "k6 run tests/graphql/soak.ts",
+    "test:graphql:spike": "k6 run tests/graphql/spike.ts",
+    "dashboard:up": "docker compose up -d",
+    "dashboard:down": "docker compose down",
+    "dashboard:logs": "docker compose logs -f grafana prometheus"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@types/k6": "^1.7.0",
+    "typescript": "^5.7.0",
+    "eslint": "^9.15.0",
+    "typescript-eslint": "^8.15.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.3.0",
+    "globals": "^15.12.0"
+  }
+}

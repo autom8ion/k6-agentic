@@ -141,3 +141,11 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# k6-agentic: local HTML dashboard exports (npm run test:* with K6_WEB_DASHBOARD_EXPORT)
+reports/*.html
+!reports/.gitkeep
+
+# k6-agentic: docker-compose bind-mounted state (if switched from named volumes)
+docker/prometheus-data/
+docker/grafana-data/
