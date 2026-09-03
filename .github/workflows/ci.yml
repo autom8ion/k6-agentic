@@ -25,12 +25,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: grafana/setup-k6-action@v1
+      # Two separate action invocations (rather than one `path` list) so each
+      # protocol gets its own --summary-export file instead of overwriting a
+      # shared one.
       - uses: grafana/run-k6-action@v1
         with:
-          path: |
-            tests/rest/smoke.ts
-            tests/graphql/smoke.ts
+          path: tests/rest/smoke.ts
           fail-fast: true
+          flags: --summary-export=reports/k6-rest-summary.json
+      - uses: grafana/run-k6-action@v1
+        with:
+          path: tests/graphql/smoke.ts
+          fail-fast: true
+          flags: --summary-export=reports/k6-graphql-summary.json
+      # Consumed by the KPI-Dashboard qa_collector (per-check pass/fail, thresholds).
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k6-summary
+          path: reports/k6-*-summary.json
+          retention-days: 14
 
   db-smoke-test:
     runs-on: ubuntu-latest
@@ -67,4 +81,12 @@ jobs:
       - name: Run DB smoke test
         env:
           POSTGRES_URL: postgres://k6:k6@localhost:5432/k6_perf?sslmode=disable
-        run: k6 run tests/db/smoke.ts
+        run: k6 run --summary-export=reports/k6-db-summary.json tests/db/smoke.ts
+
+      # Consumed by the KPI-Dashboard qa_collector (per-check pass/fail, thresholds).
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k6-db-summary
+          path: reports/k6-db-summary.json
+          retention-days: 14
