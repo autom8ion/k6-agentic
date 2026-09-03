@@ -149,3 +149,6 @@ reports/*.html
 # k6-agentic: docker-compose bind-mounted state (if switched from named volumes)
 docker/prometheus-data/
 docker/grafana-data/
+
+# k6-agentic: custom xk6-sql binary (built locally via `npm run build:k6-sql`)
+bin/

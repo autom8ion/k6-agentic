@@ -21,9 +21,12 @@
     "test:graphql:stress": "k6 run tests/graphql/stress.ts",
     "test:graphql:soak": "k6 run tests/graphql/soak.ts",
     "test:graphql:spike": "k6 run tests/graphql/spike.ts",
+    "test:db:smoke": "k6 run tests/db/smoke.ts",
+    "test:db:load": "k6 run tests/db/load.ts",
+    "build:k6-sql": "bash scripts/build-k6-sql.sh",
     "dashboard:up": "docker compose up -d",
     "dashboard:down": "docker compose down",
-    "dashboard:logs": "docker compose logs -f grafana prometheus"
+    "dashboard:logs": "docker compose logs -f grafana prometheus postgres"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",

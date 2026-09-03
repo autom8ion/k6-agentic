@@ -72,7 +72,7 @@ export function spikeScenario(overrides: Partial<Scenario> = {}): Scenario {
   } as Scenario;
 }
 
-export type Protocol = 'rest' | 'graphql';
+export type Protocol = 'rest' | 'graphql' | 'db';
 export type TestType = 'smoke' | 'load' | 'stress' | 'soak' | 'spike';
 
 interface BuildOptionsArgs {
@@ -93,7 +93,9 @@ export function buildOptions({
   return {
     scenarios: { [testType]: scenario },
     thresholds: {
-      http_req_failed: ['rate<0.05'],
+      // db tests issue no HTTP requests, so http_req_failed has no samples
+      // for them -- only apply this default to the HTTP-based protocols.
+      ...(protocol === 'db' ? {} : { http_req_failed: ['rate<0.05'] }),
       ...thresholds,
     },
     tags: { protocol, test_type: testType },
