@@ -31,3 +31,40 @@ jobs:
             tests/rest/smoke.ts
             tests/graphql/smoke.ts
           fail-fast: true
+
+  db-smoke-test:
+    runs-on: ubuntu-latest
+    needs: lint-typecheck
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: k6
+          POSTGRES_PASSWORD: k6
+          POSTGRES_DB: k6_perf
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U k6 -d k6_perf"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Seed database
+        run: |
+          sudo apt-get update && sudo apt-get install -y --no-install-recommends postgresql-client
+          for f in docker/postgres/init/*.sql; do
+            PGPASSWORD=k6 psql -h localhost -U k6 -d k6_perf -f "$f"
+          done
+
+      - uses: grafana/setup-k6-action@v1
+
+      # k6/x/sql is a Go extension, but k6 v1.2.0+ auto-provisions it (and its
+      # Postgres driver) on first run -- no xk6/Go build step needed here. See
+      # README.md "Database performance testing".
+      - name: Run DB smoke test
+        env:
+          POSTGRES_URL: postgres://k6:k6@localhost:5432/k6_perf?sslmode=disable
+        run: k6 run tests/db/smoke.ts

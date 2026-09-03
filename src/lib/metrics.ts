@@ -12,4 +12,8 @@ export const graphqlErrorRate = new Rate('graphql_error_rate');
 export const graphqlReqDuration = new Trend('graphql_req_duration', true);
 export const graphqlRequestsTotal = new Counter('graphql_requests_total');
 
+export const dbErrorRate = new Rate('db_error_rate');
+export const dbQueryDuration = new Trend('db_query_duration', true);
+export const dbQueriesTotal = new Counter('db_queries_total');
+
 export const authFailures = new Counter('auth_failures_total');
