@@ -32,6 +32,7 @@ tests/
   graphql/      smoke.ts, load.ts, stress.ts, soak.ts, spike.ts
   db/           smoke.ts, load.ts (see "Database performance testing" below)
 docker/         Prometheus config, Grafana provisioning, Postgres schema + seed
+k8s/            k6-operator example — distributed tests/rest/load.ts across pods (see below)
 scripts/        build-k6-sql.sh — OPTIONAL pinned/offline binary for tests/db (see below)
 .claude/        CLAUDE.md + skills for working on this repo with Claude Code
 ```
@@ -102,6 +103,18 @@ npm run test:db:load
 `tests/db/` intentionally ships only `smoke` and `load` (not the full five test types) — it's a template for the pattern, not a from-the-box exhaustive suite; add `stress`/`soak`/`spike` variants the same way the REST/GraphQL ones are built (reuse `src/config/scenarios.ts` + `src/lib/journeys/dbCatalogJourney.ts`) if you extend it. Query latency thresholds come from `DB_SLO` in `src/config/env.ts` — deliberately much tighter than the HTTP `SLO`, since an indexed Postgres lookup should return in low-single-digit milliseconds, not hundreds.
 
 **If you need a pinned or offline binary** (auto-resolution picks extension versions dynamically and needs network access on first run): `npm run build:k6-sql` builds `./bin/k6-sql` — a drop-in k6 binary with the SQL extension versions fixed — using a local `xk6` install if you have Go, otherwise the `grafana/xk6` Docker image. This is optional; nothing else in the repo needs it.
+
+## Distributed load testing with Kubernetes (k6-operator)
+
+`k8s/` has a [k6-operator](https://github.com/grafana/k6-operator) example that runs `tests/rest/load.ts` across multiple pods for load generation beyond a single machine — REST only (QuickPizza has no rate limit, unlike the GraphQL demo target). It's a manual, opt-in workflow requiring a real cluster, so like `load`/`stress`/`soak`/`spike` it's never wired into CI.
+
+```bash
+npm run k8s:build   # build the runner image (bakes in src/ + tests/)
+npm run k8s:apply   # install the ConfigMap + TestRun CR
+npm run k8s:delete  # tear down
+```
+
+See `k8s/README.md` for prerequisites (installing the operator) and details.
 
 ## Test types
 
