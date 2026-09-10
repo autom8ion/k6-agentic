@@ -36,6 +36,8 @@ K6_PROMETHEUS_RW_SERVER_URL=http://localhost:9090/api/v1/write k6 run --out expe
 
 There is no single "run all tests" command by design — `load`/`stress`/`soak`/`spike` should never run unattended against the shared public demo targets (see Known constraints below). CI (`.github/workflows/ci.yml`) only ever runs the `smoke` tests.
 
+`k8s/` is a k6-operator example (`npm run k8s:build` / `k8s:apply` / `k8s:delete`) for distributing `tests/rest/load.ts` across pods — REST only (GraphQL's demo target is rate-limited, DB needs cluster-reachable Postgres). It's a manual/opt-in workflow requiring a real cluster; keep it out of CI, same reasoning as above.
+
 ## Architecture
 
 **Layering**: `src/config/` (env + scenario factories) → `src/lib/` (protocol clients, metrics, auth, journeys) → `tests/<protocol>/<type>.ts` (thin entrypoints that pick a scenario + call a journey). When adding a new test, compose from existing layers rather than writing request logic directly in a test file — see the `k6-test-generator` skill in `.claude/skills/`.

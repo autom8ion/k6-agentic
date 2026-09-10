@@ -1,0 +1,12 @@
+# Env vars for the distributed REST load test, mirroring the public demo
+# values documented in .env.example. QuickPizza is Grafana's own dedicated
+# load-testing target (no rate limit), which is why this example is REST-only
+# -- see k8s/README.md.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: k6-agentic-rest-env
+data:
+  TEST_ENV: "demo"
+  REST_BASE_URL: "https://quickpizza.grafana.com"
+  REST_DEMO_TOKEN: "token abcdef0123456789"

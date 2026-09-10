@@ -26,7 +26,10 @@
     "build:k6-sql": "bash scripts/build-k6-sql.sh",
     "dashboard:up": "docker compose up -d",
     "dashboard:down": "docker compose down",
-    "dashboard:logs": "docker compose logs -f grafana prometheus postgres"
+    "dashboard:logs": "docker compose logs -f grafana prometheus postgres",
+    "k8s:build": "docker build -t k6-agentic-rest:local -f k8s/Dockerfile .",
+    "k8s:apply": "kubectl apply -f k8s/configmap.yaml -f k8s/testrun.yaml",
+    "k8s:delete": "kubectl delete -f k8s/testrun.yaml -f k8s/configmap.yaml"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",

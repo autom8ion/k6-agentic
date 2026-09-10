@@ -1,0 +1,29 @@
+# Distributed run of tests/rest/load.ts via k6-operator -- unchanged from how
+# it runs locally (`npm run test:rest:load`), just spread across multiple
+# runner pods. See k8s/README.md for prerequisites and usage.
+#
+# GraphQL and DB test types are intentionally not included here: the GraphQL
+# demo target rate-limits at ~50-60 req/min (multiplying VUs across pods would
+# blow through that instantly), and DB needs a cluster-reachable Postgres plus
+# xk6-sql's extension resolution working from every pod -- more setup than a
+# first k8s example warrants.
+apiVersion: k6.io/v1alpha1
+kind: TestRun
+metadata:
+  name: k6-agentic-rest-load
+spec:
+  # Number of runner pods k6-operator splits tests/rest/load.ts's scenario
+  # across. Tune alongside the scenario intensity in src/config/scenarios.ts --
+  # raising this without lowering per-pod VUs/arrival-rate just multiplies
+  # total load.
+  parallelism: 4
+  script:
+    localFile: /home/k6/tests/rest/load.ts
+  runner:
+    # Retag/push after `npm run k8s:build` if your cluster can't pull a
+    # locally-built image directly (e.g. anything but Docker Desktop's or
+    # kind's local registry).
+    image: k6-agentic-rest:local
+    envFrom:
+      - configMapRef:
+          name: k6-agentic-rest-env
