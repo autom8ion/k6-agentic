@@ -162,6 +162,30 @@ k6_db_error_rate_rate{testid=~"$testid"}
 
 The provisioned dashboard (ID 19665) only has panels for k6's built-in HTTP metrics — add panels using the queries above (or clone the dashboard) to visualize the custom REST/GraphQL/DB metrics.
 
+## Publishing dashboards to GitHub Pages
+
+`.github/workflows/perf-dashboard.yml` runs the same three smoke suites CI already gates on (REST, GraphQL, DB — see "Known constraints" below for why nothing heavier runs unattended) on every push to `main`, plus manual dispatch. Each run enables k6's built-in web dashboard (`K6_WEB_DASHBOARD=true` + `K6_WEB_DASHBOARD_EXPORT=<path>.html`) alongside the usual `--summary-export=<path>.json`, so a `publish` job can assemble the results into the `gh-pages` branch:
+
+```
+gh-pages/
+├── index.html              # every published run, newest first
+├── data/runs.json          # rolling manifest (last 50 runs): per-protocol pass/fail + key metrics
+└── runs/<runId>/
+    ├── index.html           # per-run summary with links to the reports below
+    ├── rest-dashboard.html  # k6 web dashboard export
+    ├── rest-summary.json    # k6 --summary-export
+    ├── graphql-dashboard.html / graphql-summary.json
+    └── db-dashboard.html / db-summary.json
+```
+
+`scripts/publish-dashboard.mjs` does the assembly: it reads whichever protocol artifacts succeeded, seeds itself from the current `gh-pages` content so history accumulates across runs instead of being wiped, and regenerates `index.html` + `data/runs.json`. A single protocol failing (e.g. a transient GraphQL `429`) doesn't block publishing the others — `if: always()` on the `publish` job picks up whatever's there.
+
+Once GitHub Pages is enabled for this repo (Settings → Pages → Build and deployment → Deploy from a branch → `gh-pages` / `/`), the site is live at `https://<org>.github.io/<repo>/`.
+
+### Feeding this into Grafana
+
+`data/runs.json` is plain JSON served over HTTPS, so the self-hosted Grafana instance (`docker compose`, see above) can chart trends across CI runs without a database: add a **JSON API** or **Infinity** datasource (Grafana → Connections → Data sources) pointing at `https://<org>.github.io/<repo>/data/runs.json`, then build a table or time-series panel over fields like `timestamp`, `protocols[].p95Ms`, and `protocols[].errorRatePct`. This is complementary to the Prometheus remote-write dashboard described above, not a replacement — that one is for watching a single run live; `data/runs.json` is for trends across runs over time.
+
 ## Known constraints of the public demo targets
 
 - **QuickPizza** (REST) is Grafana's own dedicated load-testing target and comfortably handles real load/stress/spike traffic.
@@ -178,3 +202,5 @@ The provisioned dashboard (ID 19665) only has panels for k6's built-in HTTP metr
 ## CI
 
 `.github/workflows/ci.yml` has three jobs: `lint-typecheck` (format/lint/typecheck), `smoke-tests` (REST + GraphQL smoke, via [`grafana/setup-k6-action`](https://github.com/grafana/setup-k6-action) + [`grafana/run-k6-action`](https://github.com/grafana/run-k6-action)), and `db-smoke-test` (spins up a Postgres service container, seeds it, runs `tests/db/smoke.ts` via plain `k6 run` — k6's automatic extension resolution handles `k6/x/sql`, no separate build step). `load`/`stress`/`soak`/`spike` are intentionally excluded from CI — they shouldn't run automatically against a shared target.
+
+`.github/workflows/perf-dashboard.yml` runs on push to `main` (plus manual dispatch) and publishes the same smoke suites' k6 web-dashboard HTML + summary JSON to GitHub Pages — see "Publishing dashboards to GitHub Pages" above.

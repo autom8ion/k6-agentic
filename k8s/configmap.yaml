@@ -7,6 +7,6 @@ kind: ConfigMap
 metadata:
   name: k6-agentic-rest-env
 data:
-  TEST_ENV: "demo"
-  REST_BASE_URL: "https://quickpizza.grafana.com"
-  REST_DEMO_TOKEN: "token abcdef0123456789"
+  TEST_ENV: 'demo'
+  REST_BASE_URL: 'https://quickpizza.grafana.com'
+  REST_DEMO_TOKEN: 'token abcdef0123456789'

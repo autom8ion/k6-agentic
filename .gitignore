@@ -152,3 +152,7 @@ docker/grafana-data/
 
 # k6-agentic: custom xk6-sql binary (built locally via `npm run build:k6-sql`)
 bin/
+
+# k6-agentic: local scratch dirs for the perf-dashboard.yml GitHub Pages publish step
+dashboard-artifacts/
+_site/
