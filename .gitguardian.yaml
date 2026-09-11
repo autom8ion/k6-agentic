@@ -11,15 +11,15 @@ secret:
     # docker-compose.yml's Grafana admin password is for the local-only
     # Prometheus/Grafana perf-dashboard stack this repo brings up on
     # localhost -- not exposed anywhere.
-    - "docker-compose.yml"
+    - 'docker-compose.yml'
     # Fixture data for the REST smoke test's throwaway demo users.
-    - "src/data/users.json"
+    - 'src/data/users.json'
 
   ignored_matches:
     # QuickPizza's own shared public demo token for read/rating traffic --
     # see src/lib/journeys/restPizzaJourney.ts's comment. Intentionally
     # public, reused instead of registering throwaway accounts under load.
     - name: QuickPizza shared public demo token
-      match: "token abcdef0123456789"
+      match: 'token abcdef0123456789'
     - name: REST_DEFAULT_PASSWORD demo default
-      match: "12345678"
+      match: '12345678'
