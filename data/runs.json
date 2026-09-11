@@ -1,1 +1,27 @@
-[]
+[
+  {
+    "runId": "1-aaa2812",
+    "sha": "aaa2812a720968a69baa0d2835aa685979836510",
+    "ref": "main",
+    "timestamp": "2026-09-11T22:35:15.752Z",
+    "commitUrl": "https://github.com/autom8ion/k6-agentic/commit/aaa2812a720968a69baa0d2835aa685979836510",
+    "protocols": [
+      {
+        "key": "rest",
+        "label": "REST (QuickPizza)",
+        "passed": true,
+        "p95Ms": 153.51,
+        "errorRatePct": 0,
+        "requests": 380
+      },
+      {
+        "key": "graphql",
+        "label": "GraphQL (Countries)",
+        "passed": true,
+        "p95Ms": 39.24,
+        "errorRatePct": 0,
+        "requests": 10
+      }
+    ]
+  }
+]
